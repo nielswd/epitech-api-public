@@ -36,7 +36,6 @@ def infos():
             return json.dumps({"error": {"message": "Connection token is invalid or has expired", 'code':403}}), 403
         return r.text
     except Exception as e:
-        print(e)
         return json.dumps({"error": {"message": "Server was unable to connect through Epitech API", "code": 500}}), 500
 
 @app.route('/planning', methods=['POST', 'GET'])
@@ -197,11 +196,7 @@ def modules():
     if error != {}:
         return json.dumps(error), error['error']['code']
     try:
-        if 'login' in params:
-            route = server_url+"/user/%s/notes" % params['login']
-        else:
-            route = server_url+"/user/#!/netsoul"
-        r = session.get(route, verify=ssl_verify)
+        r = session.get(server_url+"/user/#!/netsoul", verify=ssl_verify)
         if r.status_code == 403:
             return json.dumps({"error": {"message": "Connection token is invalid or has expired", 'code':403}}), 403
         return get_modules(r.text)
@@ -357,6 +352,15 @@ def favicon():
 @app.route('/wakeup', methods=['POST', 'GET'])
 def wake_up():
     return ("OK")
+
+@app.after_request
+def after_request(response):
+    response.headers.add("Access-Control-Allow-Credentials", "true")
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, PATCH, DELETE")
+    response.headers.add('Access-Control-Allow-Headers',"Origin, X-Requested-With, Content-Type, Accept")
+    response.headers.add('Content-Type','application/json')
+    return response
 
 if __name__ == '__main__':
     try:
