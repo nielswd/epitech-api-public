@@ -22,7 +22,6 @@ def log_user_with_login(params, session):
 def log_and_check_params(mandatory_params, request):
     error = {}
     session = requests.Session()
-    session.cookies['language'] = 'fr'
     params = {}
     if request.get_json() and len(request.get_json()) > 0:
         params = request.get_json()
